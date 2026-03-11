@@ -1,17 +1,16 @@
-package com.guardiao;
+package com.guardiao.engine;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+/**
+ * Guardião Anti-Golpe - Backend Engine
+ * Status: Em desenvolvimento (Alpha)
+ */
 public class Main {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+    public static void main(String[] args) {
+        System.out.println("🛡️ Guardião Anti-Golpe Inicializado.");
+        System.out.println("Status: Monitorando ameaças em tempo real...");
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
-        }
+        // Simulação inicial de análise
+        String urlTeste = "http://site-suspeito-fake.com/login";
+        System.out.println("Analisando URL: " + urlTeste);
     }
 }
