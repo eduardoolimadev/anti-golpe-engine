@@ -1,50 +1,67 @@
 package com.guardiao;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * PROBLEM: Real-time Phishing detection without relying solely on static databases.
- * ALGORITHM: Heuristic Scoring System based on URL Anatomy.
+ * PROBLEM: Static blacklists fail against ephemeral phishing sites.
+ * ALGORITHM: Weighted Heuristic Scoring Engine (WHSE).
+ * This engine analyzes URL anatomy, TLD reputation, and semantic triggers.
  */
 public class HeuristicEngine {
 
-    // Keywords commonly used in Social Engineering attacks
-    private final List<String> suspiciousKeywords = Arrays.asList(
-            "login", "verify", "update", "security", "bank", "token", "account"
-    );
+    // Keywords with specific risk weights
+    private static final Map<String, Integer> RISK_KEYWORDS = new HashMap<>();
+    static {
+        RISK_KEYWORDS.put("login", 15);
+        RISK_KEYWORDS.put("verify", 20);
+        RISK_KEYWORDS.put("bank", 25);
+        RISK_KEYWORDS.put("update", 10);
+        RISK_KEYWORDS.put("secure", 15);
+        RISK_KEYWORDS.put("account", 15);
+    }
 
-    /**
-     * Analyzes the URL and returns a risk score from 0 to 100.
-     * @param url The string to be analyzed.
-     * @return Risk percentage.
-     */
+    // High-risk Top Level Domains (commonly used in scams)
+    private final List<String> highRiskTlds = Arrays.asList(".xyz", ".top", ".tk", ".ml", ".ga");
+
+    // Trusted domains to avoid false positives (Whitelisting)
+    private final List<String> whiteList = Arrays.asList("google.com", "microsoft.com", "github.com");
+
     public int calculateRiskScore(String url) {
-        int score = 0;
         String urlLower = url.toLowerCase();
 
-        // 1. Protocol Validation (Weight: 40)
-        // Insecure HTTP is a major red flag for phishing in 2026.
-        if (urlLower.startsWith("http://")) {
-            score += 40;
+        // STEP 0: Whitelist check (Immediate 0 score)
+        for (String trusted : whiteList) {
+            if (urlLower.contains(trusted)) return 0;
         }
 
-        // 2. Semantic Analysis (Weight: 10 per keyword)
-        // Scammers use urgency-inducing words to trick users.
-        for (String key : suspiciousKeywords) {
-            if (urlLower.contains(key)) {
-                score += 10;
+        int totalScore = 0;
+
+        // STEP 1: Protocol Security (Weight: 35)
+        if (urlLower.startsWith("http://")) {
+            totalScore += 35;
+        }
+
+        // STEP 2: Weighted Semantic Analysis
+        for (Map.Entry<String, Integer> entry : RISK_KEYWORDS.entrySet()) {
+            if (urlLower.contains(entry.getKey())) {
+                totalScore += entry.getValue();
             }
         }
 
-        // 3. Structural Analysis - Subdomain Complexity (Weight: 20)
-        // Excessive dots often indicate attempts to camouflage the real domain.
-        long dotCount = urlLower.chars().filter(ch -> ch == '.').count();
-        if (dotCount > 3) {
-            score += 20;
+        // STEP 3: TLD Reputation Analysis (Weight: 20)
+        for (String tld : highRiskTlds) {
+            if (urlLower.endsWith(tld) || urlLower.contains(tld + "/")) {
+                totalScore += 20;
+            }
         }
 
-        // Cap the score at 100%
-        return Math.min(score, 100);
+        // STEP 4: Structural Complexity (Dots count)
+        long dotCount = urlLower.chars().filter(ch -> ch == '.').count();
+        if (dotCount > 3) totalScore += 15;
+
+        return Math.min(totalScore, 100);
     }
 }
