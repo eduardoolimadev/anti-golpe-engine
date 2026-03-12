@@ -25,7 +25,7 @@ public class Main {
     private static void analyze(HeuristicEngine engine, String url) {
         int score = engine.calculateRiskScore(url);
 
-        // Cores ANSI para sincronizar a saída sem atropelar
+        // Cores ANSI to sync out
         String RED = "\u001B[31m";
         String GREEN = "\u001B[32m";
         String YELLOW = "\u001B[33m";
