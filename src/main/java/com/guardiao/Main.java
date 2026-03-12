@@ -1,16 +1,24 @@
-package com.guardiao.engine;
+package com.guardiao;
 
-/**
- * Guardião Anti-Golpe - Backend Engine
- * Status: Em desenvolvimento (Alpha)
- */
 public class Main {
     public static void main(String[] args) {
-        System.out.println("🛡️ Guardião Anti-Golpe Inicializado.");
-        System.out.println("Status: Monitorando ameaças em tempo real...");
+        System.out.println("🛡️ GUARDIAO ENGINE - Heuristic Risk Analysis");
+        System.out.println("---------------------------------------------");
 
-        // Simulação inicial de análise
-        String urlTeste = "http://site-suspeito-fake.com/login";
-        System.out.println("Analisando URL: " + urlTeste);
+        HeuristicEngine engine = new HeuristicEngine();
+
+        // Mocking a suspicious URL for demonstration
+        String testUrl = "http://secure-bank-verify-account.com.net/login";
+
+        int riskLevel = engine.calculateRiskScore(testUrl);
+
+        System.out.println("Analyzing: " + testUrl);
+        System.out.println("Risk Level: " + riskLevel + "%");
+
+        if (riskLevel > 50) {
+            System.err.println("🚨 STATUS: HIGH RISK - Phishing pattern detected!");
+        } else {
+            System.out.println("✅ STATUS: URL appears to be safe.");
+        }
     }
 }
